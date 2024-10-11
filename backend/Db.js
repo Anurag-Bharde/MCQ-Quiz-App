@@ -38,11 +38,48 @@ const UserSchemas=new mongoose.Schema({
 
 
 
+const questionSchema=new mongoose.Schema({
+    questionText:{
+        type:String,
+        required:true
+    },
+    options:{
+        type:[String],
+        required:true,
+        validDate:arrayLimit
+    },
+    correctAnswer:{
+        type:String,
+        required:true
+    }
+});
 
+function arrayLimit(val){
+    return val.length===4;
+}
+
+const QuizSchemaa= new mongoose.Schema({
+    title:{
+        type:String,
+        required:true
+    },
+    questions:[questionSchema],
+    createdBy:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'UserSchemas',
+        required:true
+    },
+    createdAt:{
+        type:Date,
+        default:Date.now
+    }
+})
 
 
 const UserSchema=mongoose.model('User_Details',UserSchemas);
+const QuizSchema=mongoose.model('Quiz Schema',QuizSchemaa);
 
 module.exports={
-    UserSchema
+    UserSchema,
+    QuizSchema
 }
