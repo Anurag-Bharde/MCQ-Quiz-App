@@ -27,7 +27,7 @@ const UserRouter=express.Router()
             const UserId=dbuser._id.toString()
             const token=jwt.sign({id:UserId,role:role},JWTSECRET, { expiresIn: '1h' })
             
-            res.cookie("token", token,{httpOnly:true,secure:true,sameSite:'none'});
+            res.cookie("token ", token,{httpOnly:true,secure:true,sameSite:'none'});
             return res.json(token);
         }catch(err){
             console.log(err)
@@ -52,7 +52,7 @@ const UserRouter=express.Router()
             }
                 ;
             const token=jwt.sign({ id: finder._id, role: finder.role },JWTSECRET, { expiresIn: '1h' });
-            res.cookie("token",token,{httpOnly:true,secure:true,sameSite:'none'});
+            res.cookie("token ",token,{httpOnly:true,secure:true,sameSite:'none'});
 
             return res.send('Logged in! '+token);
         }catch(err){
