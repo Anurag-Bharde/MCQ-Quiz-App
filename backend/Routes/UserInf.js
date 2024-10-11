@@ -4,8 +4,9 @@ const jwt=require('jsonwebtoken')
 const JWTSECRET=process.env.JWT_Secret
 
 const UserRouter=express.Router()
-UserRouter.post("/signup",async(req,res)=>{
 
+
+UserRouter.post("/register",async(req,res)=>{
     try{
         
         const {Username,Email,Password,role}=req.body
@@ -32,8 +33,27 @@ UserRouter.post("/signup",async(req,res)=>{
     })
     
 
-    UserRouter.post("/SignIn",(req,res)=>{
-        
+    UserRouter.post("/login",async(req,res)=>{
+        try{
+            const {Email,password}=req.body;
+            const finder=await UserSchema.findOne({Email:Email,Password:password})
+
+            if(!finder){
+                return res.status(411).json({msg:"Enter credentials correctly"});
+            }
+            const idd=finder._id;
+            const token=jwt.sign({id:idd},JWTSECRET);
+            res.cookie("token",token,{httpOnly:true,secure:true,sameSite:'none'});
+
+            return res.send('Logged in! '+token);
+        }catch(err){
+            res.status(500).json({msg: "Internal Server Error"})
+        }
+    })
+
+    UserRouter.post("/logout",(req,res)=>{
+        res.clearCookie("token");
+        res.json({message: "Logged Out!"});
     })
 
 module.exports= UserRouter
