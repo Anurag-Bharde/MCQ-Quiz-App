@@ -23,8 +23,38 @@ const verifyToken=(req,res,next)=>{
 QuizRoute.post('/Mcq',async(req,res)=>{
     try{
         const {title,questions}=req.body
+        const newQuiz= await QuizSchema.create({
+            title,
+            questions,
+            createdBy: req.user.id
+        })
+        res.status(201).json(newQuiz);
+    }catch(err){
+        res.status(500).json({msg:"Internal server error",err})
     }
 })
 
+QuizRoute.get('/mcqs',async(req,res)=>{
+    try{
+        const quizes=await QuizRoute.find().populate('createdBy','username');
+        res.status(200).json(quizes);
+    }catch(err){
+        res.status(500).json({msg:"Internal server error",err})
+    }
+})
+
+QuizRoute.get('quizes/:id',async(req,res)=>{
+    try{
+        const quizes=await QuizSchema.findById(req.params.id);
+        if(!quiz){
+            return res.status(400).json({msg:"Quiz not found"});
+        }
+        res.status(200).json(quizes)
+    }catch(err){
+        res.status(500).json({msg:"Internal server error",err})
+    }
+})
+
+QuizRoute.post('/quiz/:id/submit')
 
 module.exports=QuizRoute
