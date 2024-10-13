@@ -1,2 +1,2 @@
-export const Back_User = "http://localhost:3000/User/";
-export const Back_Quiz = "http://localhost:3000/Quiz/";
+export const Back_User = "https://mcq-quiz-app-backend.vercel.app/User/";
+export const Back_Quiz = "https://mcq-quiz-app-backend.vercel.app/Quiz/";

@@ -1,20 +1,19 @@
 import React, { useState } from 'react';
-// import './Register.css';
 import { Back_User } from '../config';
 import { useNavigate } from 'react-router-dom';
-
 
 const Register = () => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('user'); // default role
+    const [isLoading, setIsLoading] = useState(false); // loading state
 
     const navigate = useNavigate();
 
-
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true); // Start loading
         try {
             const response = await fetch(`${Back_User}register`, {
                 method: 'POST',
@@ -22,15 +21,15 @@ const Register = () => {
                 body: JSON.stringify({ Username: username, Email: email, Password: password, role }),
             });
             const data = await response.json();
+            setIsLoading(false); // End loading
             if (response.ok) {
                 console.log('Registration successful:', data);
-
-            navigate("/DashBoard")
-                // Handle successful registration (e.g., redirect to login)
+                navigate("/DashBoard");
             } else {
                 console.error('Error registering:', data.msg);
             }
         } catch (error) {
+            setIsLoading(false); // End loading on error
             console.error('Error:', error);
         }
     };
@@ -73,7 +72,8 @@ const Register = () => {
                             required
                         />
                     </div>
-                    {/* <div className="mb-4">
+                    {/* Role selection is commented out, uncomment if needed
+                    <div className="mb-4">
                         <label className="block text-sm font-medium mb-1" htmlFor="role">Role:</label>
                         <select
                             id="role"
@@ -85,8 +85,16 @@ const Register = () => {
                             <option value="admin">Admin</option>
                         </select>
                     </div> */}
-                    <button type="submit" className="bg-blue-500 text-white font-semibold py-2 rounded-md hover:bg-blue-400 w-full">
-                        Register
+                    <button 
+                        type="submit" 
+                        className="bg-blue-500 text-white font-semibold py-2 rounded-md hover:bg-blue-400 w-full"
+                        disabled={isLoading} // Disable button during loading
+                    >
+                        {isLoading ? (
+                            <span>Loading...</span> // Show loading text or spinner
+                        ) : (
+                            "Register"
+                        )}
                     </button>
                 </form>
             </div>
