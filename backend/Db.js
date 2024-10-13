@@ -75,11 +75,32 @@ const QuizSchemaa= new mongoose.Schema({
     }
 })
 
+const UserResult = new mongoose.Schema({
+    userId: { 
+        type: mongoose.Schema.Types.ObjectId,
+         ref: 'UserSchemas',
+          required: true },
+    username: { type: String,
+         required: true },
+    quizId: { type: mongoose.Schema.Types.ObjectId,
+         ref: 'QuizSchemaa', 
+         required: true },
+    quizTitle: { type: String, 
+        required: true },
+    score: { 
+        type: Number, 
+        required: true },
+    totalQuestions: { type: Number, required: true },
+    date: { type: Date, default: Date.now }
+});
+
 
 const UserSchema=mongoose.model('User_Details',UserSchemas);
 const QuizSchema=mongoose.model('Quiz Schema',QuizSchemaa);
+const ResultSchema=mongoose.model('Results',UserResult );
 
 module.exports={
     UserSchema,
-    QuizSchema
+    QuizSchema,
+    ResultSchema
 }
