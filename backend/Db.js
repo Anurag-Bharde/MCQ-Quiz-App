@@ -78,10 +78,8 @@ const QuizSchemaa= new mongoose.Schema({
 const UserResult = new mongoose.Schema({
     userId: { 
         type: mongoose.Schema.Types.ObjectId,
-         ref: 'UserSchemas',
-          required: true },
-    username: { type: String,
-         required: true },
+         ref: 'UserSchemas' },
+    username: { type: String },
     quizId: { type: mongoose.Schema.Types.ObjectId,
          ref: 'QuizSchemaa', 
          required: true },
