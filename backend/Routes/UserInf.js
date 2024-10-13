@@ -56,7 +56,7 @@ const token = jwt.sign({ id: UserId, role: role, username: dbuser.username }, JW
         const token = jwt.sign({ id: finder._id, role: finder.role, username: finder.username }, JWTSECRET, { expiresIn: '1h' });
         res.cookie("token", token, { httpOnly: true, secure: true, sameSite: 'none' });
 
-            return res.send('Logged in! '+token);
+            return res.status(200).json({msg:'Logged in! '});
          }catch(err){
             console.log(err);
             res.status(500).json({msg: "Internal Server Error",err})
