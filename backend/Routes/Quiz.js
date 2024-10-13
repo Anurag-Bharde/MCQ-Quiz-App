@@ -7,8 +7,8 @@ const QuizRoute=express.Router();
 const JWTSECRET=process.env.JWT_Secret
 
 const verifyToken=(req,res,next)=>{
-    const token=req.cookie.token || req.headers.authorization?.split(' ')[1];
-    if(!token){
+    const token = req.cookies ? req.cookies.token : null;
+        if(!token){
         return res.status(403).json({msg:"Access Denied"});
     }
     try{
@@ -21,33 +21,38 @@ const verifyToken=(req,res,next)=>{
 }
 
 
-QuizRoute.post('/Mcq',async(req,res)=>{
+QuizRoute.post('/Mcq',verifyToken,async(req,res)=>{
     try{
         const {title,questions}=req.body
+        
         const newQuiz= await QuizSchema.create({
             title,
             questions,
             createdBy: req.user.id
         })
-        res.status(201).json(newQuiz);
+        res.status(201).json({msg:"done"});
     }catch(err){
-        res.status(500).json({msg:"Internal server error",err})
+        console.log(err)
+        res.status(500).json({msg:"Internal server error"})
     }
 })
 
-QuizRoute.get('/mcqs',async(req,res)=>{
+QuizRoute.get('/Mcqs',async(req,res)=>{
     try{
-        const quizes=await QuizRoute.find().populate('createdBy','username');
+        
+        const quizes=await QuizSchema.find().select('title createdAt');
         res.status(200).json(quizes);
     }catch(err){
-        res.status(500).json({msg:"Internal server error",err})
+        console.log(err)
+        res.status(500).json({msg:"Internal server error"})
     }
 })
 
-QuizRoute.get('quizes/:id',async(req,res)=>{
+QuizRoute.get('/Mcqs/:id',async(req,res)=>{
     try{
         const quizes=await QuizSchema.findById(req.params.id).select('-questions.correctAnswer');
-        if(!quiz){
+        if(!quizes){
+            console.log(12)
             return res.status(400).json({msg:"Quiz not found"});
         }
         res.status(200).json(quizes)
