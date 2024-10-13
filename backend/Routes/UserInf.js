@@ -28,7 +28,7 @@ const UserRouter=express.Router()
 
 const token = jwt.sign({ id: UserId, role: role, username: dbuser.username }, JWTSECRET, { expiresIn: '1h' });
             
-            res.cookie("token ", token,{httpOnly:true,secure:true,sameSite:'none'});
+            res.cookie("token", token,{httpOnly:true,secure:true,sameSite:'none'});
             return res.json(token);
         }catch(err){
             console.log(err)
@@ -41,24 +41,25 @@ const token = jwt.sign({ id: UserId, role: role, username: dbuser.username }, JW
     UserRouter.post("/login",async(req,res)=>{
         try{
             const {Email,Password}=req.body;
-            const hashedPassword = await bcrypt.hash(Password, 10);
-            const finder=await UserSchema.findOne({Email:Email,Password:hashedPassword})
-
+           
+            const finder=await UserSchema.findOne({Email:Email})
             if(!finder){
                 return res.status(411).json({msg:"Enter credentials correctly"});
             }
-            const idd=
-            {id:finder._id,
-             role:finder.role
-            }
-                ;
 
-           const token = jwt.sign({ id: UserId, role: role, username: dbuser.username }, JWTSECRET, { expiresIn: '1h' });
-            res.cookie("token ",token,{httpOnly:true,secure:true,sameSite:'none'});
+            const isMatch = await bcrypt.compare(Password, finder.Password);
+            if (!isMatch) {
+                return res.status(411).json({ msg: "Incorrect credentials" });
+            }
+            
+
+        const token = jwt.sign({ id: finder._id, role: finder.role, username: finder.username }, JWTSECRET, { expiresIn: '1h' });
+        res.cookie("token", token, { httpOnly: true, secure: true, sameSite: 'none' });
 
             return res.send('Logged in! '+token);
-        }catch(err){
-            res.status(500).json({msg: "Internal Server Error"})
+         }catch(err){
+            console.log(err);
+            res.status(500).json({msg: "Internal Server Error",err})
         }
     })
 
